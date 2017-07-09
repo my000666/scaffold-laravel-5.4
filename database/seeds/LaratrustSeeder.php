@@ -60,6 +60,12 @@ class LaratrustSeeder extends Seeder
                 'password' => bcrypt('password')
             ]);
             $user->attachRole($role);
+
+            $profile = new \App\Models\UserProfile();
+            $profile->user_id = $user->id;
+            $profile->avatar = '/avatars/' . md5($user->email) . '.png';
+            $profile->save();
+            Avatar::create($user->name)->save(storage_path('app/public') . $profile->avatar);
         }
 
         // creating user with permissions
@@ -107,6 +113,7 @@ class LaratrustSeeder extends Seeder
         DB::table('permission_user')->truncate();
         DB::table('role_user')->truncate();
         \App\Models\User::truncate();
+        \App\Models\UserProfile::truncate();
         \App\Models\Role::truncate();
         \App\Models\Permission::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');

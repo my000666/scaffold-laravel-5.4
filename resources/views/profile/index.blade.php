@@ -31,7 +31,7 @@
             </div>
 
             <div class="card-content">
-                {{ Form::model($user, ['url' => route('profile.store')]) }}
+                {{ Form::model($user, ['route' => 'profile.store']) }}
                 <div class="tab-content">
                     <div class="tab-pane active" id="credential">
                         <div class="row">
@@ -159,9 +159,7 @@
     <div class="col-md-4">
         <div class="card card-profile">
             <div class="card-avatar">
-                <a href="#pablo">
-                    <img class="img" src="{{ asset('img/faces/marc.jpg') }}" />
-                </a>
+                <img class="img" src="{{ asset("storage".$user->profile->avatar) }}" />
             </div>
 
             <div class="content">

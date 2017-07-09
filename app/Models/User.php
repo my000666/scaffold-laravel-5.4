@@ -22,4 +22,32 @@ class User extends Authenticatable
     public function profile() {
         return $this->hasOne('App\Models\UserProfile');
     }
+
+    public function user_role() {
+        return $this->hasMany('App\Models\RoleUser');
+    }
+
+    public function user_permission() {
+        return $this->hasMany('App\Models\PermissionUser');
+    }
+
+    public function allowed_admins() {
+        $roles = Role::get()->pluck('name', 'id')->toArray();
+        foreach ($roles as $role) {
+            if(!$this->can(sprintf("read-role-admin-%s", $role))) {
+                unset($roles[array_search($role, $roles)]);
+            }
+        }
+        return $roles;
+    }
+
+    public function allowed_users() {
+        $roles = Role::get()->pluck('name', 'id')->toArray();
+        foreach ($roles as $role) {
+            if(!$this->can(sprintf("read-role-user-%s", $role))) {
+                unset($roles[array_search($role, $roles)]);
+            }
+        }
+        return $roles;
+    }
 }

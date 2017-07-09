@@ -49,3 +49,7 @@ html, body {
 .card h4 {
     margin-bottom: 0 !important;
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}

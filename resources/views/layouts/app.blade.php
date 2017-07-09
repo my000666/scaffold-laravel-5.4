@@ -30,7 +30,9 @@
         @yield('scripts')
     </head>
 
-    <body>
+    <body id="app">
         @yield('container')
+
+        @yield('modal')
     </body>
 </html>

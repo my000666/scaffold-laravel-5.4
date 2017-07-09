@@ -13,10 +13,13 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 class UserCreated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $user_id;
 
-    public function __construct($user_id)
+    public $user;
+    public $password;
+
+    public function __construct($data)
     {
-        $this->user_id = $user_id;
+        $this->user = isset($data['user']) ? $data['user'] : null;
+        $this->password = isset($data['password']) ? $data['password'] : null;;
     }
 }
