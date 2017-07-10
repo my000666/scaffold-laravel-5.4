@@ -14,10 +14,11 @@ class LaratrustSeeder extends Seeder
     {
         $this->command->info('Truncating User, Role and Permission tables');
         $this->truncateLaratrustTables();
-        
+
         $config = config('laratrust_seeder.role_structure');
         $userPermission = config('laratrust_seeder.permission_structure');
         $mapPermission = collect(config('laratrust_seeder.permissions_map'));
+        $roleModes = config('laratrust_seeder.mode_structure');
 
         foreach ($config as $key => $modules) {
             // Create a new role
@@ -43,7 +44,7 @@ class LaratrustSeeder extends Seeder
                     ]);
 
                     $this->command->info('Creating Permission to '.$permissionValue.' for '. $module);
-                    
+
                     if (!$role->hasPermission($permission->name)) {
                         $role->attachPermission($permission);
                     } else {
@@ -57,7 +58,8 @@ class LaratrustSeeder extends Seeder
             $user = \App\Models\User::create([
                 'name' => ucwords(str_replace("_", " ", $key)),
                 'email' => $key.'@app.com',
-                'password' => bcrypt('password')
+                'password' => bcrypt('password'),
+                'remember_token' => str_random(10),
             ]);
             $user->attachRole($role);
 
@@ -73,13 +75,23 @@ class LaratrustSeeder extends Seeder
             foreach ($userPermission as $key => $modules) {
                 foreach ($modules as $module => $value) {
                     $permissions = explode(',', $value);
-                    // Create default user for each permission set
-                    $user = \App\Models\User::create([
+                    // Find or Create default user for each permission set
+                    $user = \App\Models\User::firstOrCreate([
                         'name' => ucwords(str_replace("_", " ", $key)),
-                        'email' => $key.'@app.com',
-                        'password' => bcrypt('password'),
-                        'remember_token' => str_random(10),
+                        'email' => $key.'@app.com'
                     ]);
+                    if($user->wasRecentlyCreated) {
+                        $user->password = bcrypt('password');
+                        $user->remember_token = str_random(10);
+                        $user->save();
+
+                        $profile = new \App\Models\UserProfile();
+                        $profile->user_id = $user->id;
+                        $profile->avatar = '/avatars/' . md5($user->email) . '.png';
+                        $profile->save();
+                        Avatar::create($user->name)->save(storage_path('app/public') . $profile->avatar);
+                    }
+
                     foreach ($permissions as $p => $perm) {
                         $permissionValue = $mapPermission->get($perm);
 
@@ -90,7 +102,7 @@ class LaratrustSeeder extends Seeder
                         ]);
 
                         $this->command->info('Creating Permission to '.$permissionValue.' for '. $module);
-                        
+
                         if (!$user->hasPermission($permission->name)) {
                             $user->attachPermission($permission);
                         } else {
@@ -100,8 +112,24 @@ class LaratrustSeeder extends Seeder
                 }
             }
         }
-    }
 
+        foreach ($roleModes as $key => $roles) {
+            $mode = \App\Models\Mode::firstOrCreate([
+                'name' => str_slug($key),
+                'display_name' => ucfirst($key),
+                'description' => ucfirst($key),
+            ]);
+
+            foreach ($roles as $value) {
+                $role = \App\Models\Role::where('name', $value)->first();
+                \App\Models\ModeRole::create([
+                    'mode_id' => $mode->id,
+                    'role_id' => $role->id
+                ]);
+            }
+        }
+    }
+    
     /**
      * Truncates all the laratrust tables and the users table
      * @return    void
@@ -116,6 +144,8 @@ class LaratrustSeeder extends Seeder
         \App\Models\UserProfile::truncate();
         \App\Models\Role::truncate();
         \App\Models\Permission::truncate();
+        \App\Models\Mode::truncate();
+        \App\Models\ModeRole::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 }

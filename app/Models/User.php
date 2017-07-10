@@ -31,20 +31,10 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\PermissionUser');
     }
 
-    public function allowed_admins() {
+    public function allowed_roles($type = 'read') {
         $roles = Role::get()->pluck('name', 'id')->toArray();
         foreach ($roles as $role) {
-            if(!$this->can(sprintf("read-role-admin-%s", $role))) {
-                unset($roles[array_search($role, $roles)]);
-            }
-        }
-        return $roles;
-    }
-
-    public function allowed_users() {
-        $roles = Role::get()->pluck('name', 'id')->toArray();
-        foreach ($roles as $role) {
-            if(!$this->can(sprintf("read-role-user-%s", $role))) {
+            if(!$this->can(sprintf("%s-role-%s", $type, $role))) {
                 unset($roles[array_search($role, $roles)]);
             }
         }

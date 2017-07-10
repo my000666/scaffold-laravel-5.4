@@ -24,7 +24,10 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = User::whereHas('user_role.role', function($q) {
-            $q->whereIn('name', Auth::user()->allowed_users());
+            $q->whereIn('name', Auth::user()->allowed_roles('read'));
+        })
+        ->whereHas('user_role.role.mode_role.mode', function($q) {
+            $q->where('name', 'customer');
         })
         ->where(function($q) use ($request) {
             $q->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($request->search).'%']);
@@ -38,7 +41,11 @@ class UserController extends Controller
     public function create()
     {
         $user = new User();
-        $roles = Role::whereIn('name', Auth::user()->allowed_users())->pluck('display_name', 'id');
+        $roles = Role::whereIn('name', Auth::user()->allowed_roles('create'))
+            ->whereHas('mode_role.mode', function($q) {
+                $q->where('name', 'customer');
+            })
+            ->pluck('display_name', 'id');
         $role = null;
 
         return view('user.form', compact('user', 'roles', 'role'));
@@ -49,7 +56,7 @@ class UserController extends Controller
         $validate = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'email' => 'required|email|unique:users|max:255',
-            'role' => 'required|in:'.implode(',', array_keys(Auth::user()->allowed_users()))
+            'role' => 'required|in:'.implode(',', array_keys(Auth::user()->allowed_roles('create')))
         ]);
 
         $password = str_random(8) . substr(str_shuffle('~!@#$%^&*()'), 0, 2);
@@ -81,7 +88,11 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
-        $roles = Role::whereIn('name', Auth::user()->allowed_users())->pluck('display_name', 'id');
+        $roles = Role::whereIn('name', Auth::user()->allowed_roles('update'))
+            ->whereHas('mode_role.mode', function($q) {
+                $q->where('name', 'customer');
+            })
+            ->pluck('display_name', 'id');
         $role = $user->roles->first()->id;
 
         return view('user.form', compact('user', 'roles', 'role'));
@@ -92,7 +103,7 @@ class UserController extends Controller
         $validate = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'email' => "required|email|unique:users,email,$id,id|max:255",
-            'role' => 'required|in:'.implode(',', array_keys(Auth::user()->allowed_users()))
+            'role' => 'required|in:'.implode(',', array_keys(Auth::user()->allowed_roles('update')))
         ]);
 
         if($validate->fails()) {
