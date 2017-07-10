@@ -11,6 +11,6 @@ class Role extends LaratrustRole
     }
 
     public function mode_role() {
-        return $this->hasMany('App\Models\ModeRole');
+        return $this->hasOne('App\Models\ModeRole');
     }
 }

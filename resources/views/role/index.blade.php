@@ -44,6 +44,7 @@
                         <th style="width: 1%">#</th>
                         <th>Name</th>
                         <th>Slug</th>
+                        <th>Type</th>
                         <th>Description</th>
                         <th style="width: 1%"></th>
                     </tr>
@@ -55,6 +56,7 @@
                             <td>{{ $index++ }}</td>
                             <td>{{ $role->display_name }}</td>
                             <td>{{ $role->name }}</td>
+                            <td>{{ $role->mode_role->mode->display_name }}</td>
                             <td>{{ $role->description }}</td>
                             <td class="td-actions text-right">
                                 <a type="button" rel="tooltip" title="" class="btn btn-primary btn-simple btn-xs"
