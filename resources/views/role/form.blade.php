@@ -39,6 +39,24 @@
         </div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-md-4 col-md-offset-8">
+        <div class="form-group" v-bind:class="errors.mode ? 'has-error' : ''">
+            <label class="control-label">
+                <span v-if="errors.mode">@{{ errors.mode[0] }}</span>
+                <span v-else>Mode</span>
+            </label><br>
+            <div class="text-right">
+                @foreach($modes as $key => $value)
+                    <span class="radio-inline">
+                    {!! Form::radio('mode', $key, $key == $mode) !!} {!! $value !!}
+                </span>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</div>
 {!! Form::close() !!}
 
 <script>

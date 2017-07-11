@@ -14,6 +14,7 @@ class CreateModeRolesTable extends Migration
     public function up()
     {
         Schema::create('mode_role', function (Blueprint $table) {
+            $table->increments('id');
             $table->integer('mode_id')->unsigned();
             $table->integer('role_id')->unsigned();
 
@@ -21,8 +22,6 @@ class CreateModeRolesTable extends Migration
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('role_id')->references('id')->on('roles')
                 ->onUpdate('cascade')->onDelete('cascade');
-
-            $table->primary(['mode_id', 'role_id']);
         });
     }
 

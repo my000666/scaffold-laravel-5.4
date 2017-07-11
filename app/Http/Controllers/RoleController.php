@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Mode;
+use App\Models\ModeRole;
 use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Flash;
 use Validator;
+use Log;
 
 class RoleController extends Controller
 {
@@ -35,8 +38,10 @@ class RoleController extends Controller
         $role = new Role();
         $permissions = Permission::pluck('display_name', 'id');
         $permission = null;
+        $modes = Mode::pluck('display_name', 'id');
+        $mode = null;
 
-        return view('role.form', compact('role', 'permissions', 'permission'));
+        return view('role.form', compact('role', 'permissions', 'permission', 'modes', 'mode'));
     }
 
     public function store(Request $request)
@@ -44,7 +49,8 @@ class RoleController extends Controller
         $validate = Validator::make($request->all(), [
             'display_name' => 'required|unique:roles|max:255',
             'description' => "required|max:255",
-            'permission' => "required"
+            'permission' => "required",
+            'mode' => 'required'
         ]);
 
         if($validate->fails()) {
@@ -57,6 +63,11 @@ class RoleController extends Controller
         $role->description = $request->description;
         $role->save();
         $role->attachPermissions($request->permission);
+
+        $mode = new ModeRole();
+        $mode->mode_id = $request->mode;
+        $mode->role_id = $role->id;
+        $mode->save();
 
         foreach (['create', 'read', 'update', 'delete'] as $ability) {
             $permission = new Permission();
@@ -80,8 +91,10 @@ class RoleController extends Controller
         $role = Role::find($id);
         $permissions = Permission::pluck('display_name', 'id');
         $permission = $role->permissions->pluck('id')->toArray();
+        $modes = Mode::pluck('display_name', 'id');
+        $mode = $role->mode_role->mode->id;
 
-        return view('role.form', compact('role', 'permissions', 'permission'));
+        return view('role.form', compact('role', 'permissions', 'permission', 'modes', 'mode'));
     }
 
     public function update(Request $request, $id)
@@ -100,8 +113,13 @@ class RoleController extends Controller
         $role->display_name = $request->display_name;
         $role->description = $request->description;
         $role->save();
-
         $role->syncPermissions($request->permission);
+
+        Log::error($role->mode_role);
+        $mode = $role->mode_role;
+        $mode->mode_id = $request->mode;
+        $mode->role_id = $role->id;
+        $mode->save();
 
         Flash::success(sprintf('You\'ve successfully edited the %s role.', $role->display_name));
         return ['errors' => false];
