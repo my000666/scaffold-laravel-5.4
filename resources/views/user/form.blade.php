@@ -41,6 +41,7 @@
 </div>
 {!! Form::close() !!}
 
+<script type="text/javascript" src="{{ asset('/js/modal.js') }}"></script>
 <script>
     var vm = new Vue({
         el: '#user-form',

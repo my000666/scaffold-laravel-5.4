@@ -124,6 +124,7 @@ class AdminController extends Controller
     public function destroy($id)
     {
         $user = User::find($id);
+        $user->profile->delete();
         $user->syncRoles([]);
         $user->delete();
 

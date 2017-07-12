@@ -32,7 +32,6 @@
 
     <body id="app">
         @yield('container')
-
         @yield('modal')
     </body>
 </html>

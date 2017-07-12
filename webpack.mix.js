@@ -32,5 +32,9 @@ mix.js([
     'resources/assets/js/material-dashboard.js'
 ], 'public/js/script.js');
 
+mix.js([
+    'resources/assets/js/material-dashboard.js'
+], 'public/js/modal.js');
+
 mix.copyDirectory('resources/assets/fonts', 'public/fonts');
 mix.copyDirectory('resources/assets/img', 'public/img');

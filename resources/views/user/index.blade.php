@@ -10,10 +10,9 @@
         <div class="card">
             <div class="card-header" data-background-color="red">
                 <h4 class="title pull-left">User List</h4>
-                <a type="button" rel="tooltip" title="" class="pull-right cursor-pointer"
+                <a type="button" class="pull-right cursor-pointer"
                    data-toggle="modal"
                    data-target="#modal-form"
-                   data-original-title="Add"
                    data-action="{{ route('user.create') }}"
                    data-title="Create User"
                 >
@@ -57,19 +56,17 @@
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->roles->first()->display_name }}</td>
                             <td class="td-actions text-right">
-                                <a type="button" rel="tooltip" title="" class="btn btn-primary btn-simple btn-xs"
+                                <a type="button" class="btn btn-primary btn-simple btn-xs"
                                    data-toggle="modal"
                                    data-target="#modal-form"
-                                   data-original-title="Edit"
                                    data-action="{{ route('user.edit', $user->id) }}"
                                    data-title="Edit {{ $user->name }}"
                                 >
                                     <i class="material-icons">edit</i>
                                 </a>
-                                <a type="button" rel="tooltip" title="" class="btn btn-danger btn-simple btn-xs"
+                                <a type="button" class="btn btn-danger btn-simple btn-xs"
                                    data-toggle="modal"
                                    data-target="#modal-delete"
-                                   data-original-title="Delete"
                                    data-action="{{ route('user.destroy', $user->id) }}"
                                    data-title="Delete Confirmation!"
                                    data-message="You are about to delete {{ $user->name }} record, this procedure is irreversible. Do you want to proceed?"

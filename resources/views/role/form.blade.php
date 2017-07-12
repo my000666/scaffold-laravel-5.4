@@ -35,23 +35,22 @@
                 <span v-else>Permission</span>
             </label>
             {!! Form::select('permission[]', $permissions, old('permission', $permission), ['class' => 'form-control', 'multiple' => true, 'placeholder' => '']) !!}
-            <span class="material-icons form-control-feedback">clear</span>
         </div>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-md-4 col-md-offset-8">
+    <div class="col-md-12">
         <div class="form-group" v-bind:class="errors.mode ? 'has-error' : ''">
             <label class="control-label">
                 <span v-if="errors.mode">@{{ errors.mode[0] }}</span>
                 <span v-else>Mode</span>
-            </label><br>
-            <div class="text-right">
+            </label>
+            <div class="radio">
                 @foreach($modes as $key => $value)
-                    <span class="radio-inline">
+                    <label class="radio-inline">
                     {!! Form::radio('mode', $key, $key == $mode) !!} {!! $value !!}
-                </span>
+                    </label>
                 @endforeach
             </div>
         </div>
@@ -59,6 +58,7 @@
 </div>
 {!! Form::close() !!}
 
+<script type="text/javascript" src="{{ asset('/js/modal.js') }}"></script>
 <script>
     var vm = new Vue({
         el: '#role-form',

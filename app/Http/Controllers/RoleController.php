@@ -128,6 +128,10 @@ class RoleController extends Controller
     public function destroy($id)
     {
         $role = Role::find($id);
+        if($role->role_user) {
+            Flash::error(sprintf('Role %s cannot be deleted, it\'s already used.', $role->display_name));
+            return redirect()->route('role.index');
+        }
         $role->syncPermissions([]);
         $role->delete();
 

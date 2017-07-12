@@ -10,10 +10,9 @@
         <div class="card">
             <div class="card-header" data-background-color="blue">
                 <h4 class="title pull-left">Admin List</h4>
-                <a type="button" rel="tooltip" title="" class="pull-right cursor-pointer"
+                <a type="button" class="pull-right cursor-pointer"
                    data-toggle="modal"
                    data-target="#modal-form"
-                   data-original-title="Add"
                    data-action="{{ route('admin.create') }}"
                    data-title="Create Admin"
                 >
@@ -57,19 +56,17 @@
                                 <td>{{ $admin->email }}</td>
                                 <td>{{ $admin->roles->first()->display_name }}</td>
                                 <td class="td-actions text-right">
-                                    <a type="button" rel="tooltip" title="" class="btn btn-primary btn-simple btn-xs"
+                                    <a type="button" class="btn btn-primary btn-simple btn-xs"
                                        data-toggle="modal"
                                        data-target="#modal-form"
-                                       data-original-title="Edit"
                                        data-action="{{ route('admin.edit', $admin->id) }}"
                                        data-title="Edit {{ $admin->name }}"
                                     >
                                         <i class="material-icons">edit</i>
                                     </a>
-                                    <a type="button" rel="tooltip" title="" class="btn btn-danger btn-simple btn-xs"
+                                    <a type="button" class="btn btn-danger btn-simple btn-xs"
                                        data-toggle="modal"
                                        data-target="#modal-delete"
-                                       data-original-title="Delete"
                                        data-action="{{ route('admin.destroy', $admin->id) }}"
                                        data-title="Delete {{ $admin->name }}"
                                        data-message="You are about to delete {{ $admin->name }} record, this procedure is irreversible. Do you want to proceed?"
